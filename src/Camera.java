@@ -9,8 +9,8 @@ public class Camera {
 
 	public static int ay;
 
-	public static int x_origin = 900;
-	public static int y_origin = 440;
+	public static int x_origin = 400;
+	public static int y_origin = 400;
 
 	public static final int GRAVITY = 1;
 

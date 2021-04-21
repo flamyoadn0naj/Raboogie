@@ -127,12 +127,16 @@ public class Sprite {
 		
 	public void draw(Graphics g) {
 		if(moving) {
-			g.drawRect((int)x - Camera.x,(int)y - Camera.y,50,75);
-			g.drawImage(animation[action].getCurrentImage(), (int) x - Camera.x, (int) y - Camera.y, 75, 75, null);
+			g.drawRect((int)x - Camera.x + Camera.x_origin,(int)y - Camera.y + Camera.y_origin,50,75);
+			g.drawImage(animation[action].getCurrentImage(), (int) x - Camera.x + Camera.x_origin,
+					(int) y - Camera.y + Camera.y_origin, 75, 75,
+					null);
 
 		} else {
-			g.drawRect((int)x - Camera.x,(int)y - Camera.y,50,75);
-			g.drawImage(animation[action].getStillImage(), (int) x - Camera.x, (int) y - Camera.y, 75, 75, null);
+			g.drawRect((int)x - Camera.x + Camera.x_origin,(int)y - Camera.y + Camera.y_origin,75,75);
+			g.drawImage(animation[action].getStillImage(), (int) x - Camera.x + Camera.x_origin,
+					(int) y - Camera.y + Camera.y_origin,	75, 75,
+					null);
 		}
 		
 		moving = false;

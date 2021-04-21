@@ -96,6 +96,7 @@ public class JavaGame extends JFrame implements Runnable, KeyListener, MouseList
         }*/
         //----------------------------------------------------------------------------------------//
 
+        // Boundaries of my robot to detect collision
         double top    = robot.y;
         double bottom = robot.y + S-1;
         double left   = robot.x;
@@ -113,36 +114,33 @@ public class JavaGame extends JFrame implements Runnable, KeyListener, MouseList
 		{
 			if((map[(int) ((bottom+S/8)/S)].charAt((int) (left/S)) == '.')  && (map[(int) ((bottom+S/8)/S)].charAt((int) (right/S)) == '.')) {
                 robot.moveDown(S / 8);
-                //r.moveBy(   0, +S/8);
+                Camera.moveDown(S / 8);
             }
-            Camera.moveDown(S / 8);
 		}
 //*/
 
         if(pressing[UP]) {
             if ((map[(int) ((top - S / 8) / S)].charAt((int) (left / S)) == '.') && (map[(int) ((top - S / 8) / S)].charAt((int) (right / S)) == '.')) {
                 robot.jumpUp(S / 8);
+                Camera.moveUp(S / 8);
             }
-            Camera.moveUp(S / 8);
+
         }
 
 
-        if(pressing[LT])
-        {
-            if((map[(int) (top/S)].charAt((int) ((left-S/8)/S)) == '.')  && (map[(int) (bottom/S)].charAt((int) ((left-S/8)/S)) == '.'))
-
-                robot.moveLeft(S/8);
-
-            Camera.moveLeft(S / 8);
+        if(pressing[LT]) {
+            if ((map[(int) (top / S)].charAt((int) ((left - S / 8) / S)) == '.') && (map[(int) (bottom / S)].charAt((int) ((left - S / 8) / S)) == '.')) {
+                robot.moveLeft(S / 8);
+                Camera.moveLeft(S / 8);
+            }
         }
 
         if(pressing[RT])
         {
-            if((map[(int) (top/S)].charAt((int) ((right+S/8)/S)) == '.')  && (map[(int) (bottom/S)].charAt((int) ((right+S/8)/S)) == '.'))
-
-                robot.moveRight(S/8);
-
-            Camera.moveRight(S / 8);
+            if((map[(int) (top/S)].charAt((int) ((right+S/8)/S)) == '.')  && (map[(int) (bottom/S)].charAt((int) ((right+S/8)/S)) == '.')) {
+                robot.moveRight(S / 8);
+                Camera.moveRight(S / 8);
+            }
         }
 
         if((map[(int) ((bottom)/S+1)].charAt((int) (left/S)) != '.')  && (map[(int) ((bottom+1)/S+1)].charAt((int) (right/S)) != '.'))
@@ -189,7 +187,7 @@ public class JavaGame extends JFrame implements Runnable, KeyListener, MouseList
                 char c = map[row].charAt(col);
 
                 if (c != '.')
-                g.drawImage(tile[c-'A'], S*col - Camera.x, S*row - Camera.y, S, S, null);
+                g.drawImage(tile[c-'A'], S*col - Camera.x + Camera.x_origin, S*row - Camera.y + Camera.y_origin, S, S, null);
             }
         }
         robot.draw(g);
