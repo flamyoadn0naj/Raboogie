@@ -13,7 +13,7 @@ public class JavaGame extends JFrame implements Runnable, KeyListener, MouseList
 
     //Soldier    soldier    = new Soldier(150, 150, Soldier.DOWN);
 
-    Robot robot = new Robot(0,0,Robot.LEFT);
+    Robot robot = new Robot(475,290,Robot.LEFT);
     //Rect r = new Rect(150,155, 70, 115);
 
 
@@ -21,11 +21,15 @@ public class JavaGame extends JFrame implements Runnable, KeyListener, MouseList
 
 
     // S is the scaling factor for the map.
-    public static final int S = 64;
+    public static final int S = 32;
 
 
-    String[] map =
+    String[] mapdata =
             {
+                    "............................................................",
+                    "............................................................",
+                    "............................................................",
+                    "............................................................",
                     "..................AC........................................",
                     "..................DEBBBBBC..................................",
                     "..................DEEEEEEF..................................",
@@ -54,13 +58,20 @@ public class JavaGame extends JFrame implements Runnable, KeyListener, MouseList
     Image background = getImage("Resources Root/TileMap/BG.png");
     Image[] tile;
 
+    TileMap map;
+
     public JavaGame() {
+
+        Camera.x = 856;
+        Camera.y = 512;
         int numOfTiles = 18;
         tile = new Image[numOfTiles];
 
         for (int i = 0; i < numOfTiles; i++) {
             tile[i] = getImage("Resources Root/TileMap/" + (i+1) + ".png");
         }
+
+        map = new TileMap(mapdata,tile,background,32);
         // Game properties
         setTitle("JavaGame");
         setSize(1500,800);
@@ -79,117 +90,74 @@ public class JavaGame extends JFrame implements Runnable, KeyListener, MouseList
     }
 
     public void inGameLoop() {
-        // Soldier movement
-        //if(pressing[UP])  robot.moveUp(5);
-        //----------------------------------------------------------------------------------------//
-       /* if(pressing[UP]) {
-            robot.jumpUp(1);
-        }
-        if(pressing[DN]) {
-            robot.moveDown(5);
-        }
-        if(pressing[LT]) {
-            robot.moveLeft(5);
-        }
-        if(pressing[RT]) {
-            robot.moveRight(5);
-        }*/
-        //----------------------------------------------------------------------------------------//
-
         // Boundaries of my robot to detect collision
-        double top    = robot.y;
-        double bottom = robot.y + S-1;
-        double left   = robot.x;
-        double right  = robot.x + S-1;
+        int top    = robot.y;
+        int bottom = robot.y + S-1;
+        int left   = robot.x;
+        int right  = robot.x + S-1;
 
-/*
-		if(pressing[UP])
-		{
-			if((map[(top-S/8)/S].charAt(left/S) == '.')  && (map[(top-S/8)/S].charAt(right/S) == '.'))
-
-				r.moveBy(   0, -S/8);
-		}
-*/
-		if(pressing[DN])
-		{
-			if((map[(int) ((bottom+S/8)/S)].charAt((int) (left/S)) == '.')  && (map[(int) ((bottom+S/8)/S)].charAt((int) (right/S)) == '.')) {
-                robot.moveDown(S / 8);
-                Camera.moveDown(S / 8);
-            }
-		}
-//*/
-
-        if(pressing[UP]) {
-            if ((map[(int) ((top - S / 8) / S)].charAt((int) (left / S)) == '.') && (map[(int) ((top - S / 8) / S)].charAt((int) (right / S)) == '.')) {
-                robot.jumpUp(S / 8);
-                Camera.moveUp(S / 8);
-            }
-
-        }
-
-
-        if(pressing[LT]) {
-            if ((map[(int) (top / S)].charAt((int) ((left - S / 8) / S)) == '.') && (map[(int) (bottom / S)].charAt((int) ((left - S / 8) / S)) == '.')) {
-                robot.moveLeft(S / 8);
-                Camera.moveLeft(S / 8);
-            }
-        }
-
-        if(pressing[RT])
+        if(!map.clearBelow(robot))           // You are standing on the ground
         {
-            if((map[(int) (top/S)].charAt((int) ((right+S/8)/S)) == '.')  && (map[(int) (bottom/S)].charAt((int) ((right+S/8)/S)) == '.')) {
-                robot.moveRight(S / 8);
-                Camera.moveRight(S / 8);
+            robot.stops();
+            Camera.stops();
+
+            if(pressing[UP])
+            {
+                if(map.clearAbove(robot))
+                {
+                    robot.jumpUp(S/2);
+
+                    Camera.jump(S/2);
+                }
+            }
+        }
+        else                             // You are airborne
+        {
+            robot.applyGravity();
+            Camera.applyGravity();
+        }
+
+
+
+        if(pressing[LT])
+        {
+            if(map.clearLeftOf(robot))
+            {
+                robot.moveLeft(S/4);
+
+                Camera.moveLeft(S/4);
             }
         }
 
-        if((map[(int) ((bottom)/S+1)].charAt((int) (left/S)) != '.')  && (map[(int) ((bottom+1)/S+1)].charAt((int) (right/S)) != '.'))
-        {
-            robot.vx = 0;
-            robot.vy = 0;
-            robot.ay = 0;
+        if(pressing[RT]) {
+            if(map.clearRightOf(robot)) {
+                robot.moveRight(S/4);
+
+                Camera.moveRight(S/4);
+            }
+        }
+
+        if(!map.clearLeftOf(robot)) {
+                robot.vx = 0;
+                Camera.vx = 0;
+        }
+
+        if(!map.clearRightOf(robot)) {
+                robot.vx = 0;
+                Camera.vx = 0;
+        }
+
+        if(!map.clearAbove(robot)) {
+                robot.vy=0;
+                Camera.vy = 0;
         }
 
         robot.update();
-        //----------------------------------------------------------------------------------------//
-        /*
-        if(pressing[UP])  soldier.moveUp(5);
-        if(pressing[DN])  soldier.moveDown(5);
-        if(pressing[LT])  soldier.moveLeft(5);
-        if(pressing[RT])  soldier.moveRight(5);
-        //*/
-
-        // Tank movement
-        /*
-        if(pressing[UP]) {
-            tank.moveBy(0,-5);
-
-        }
-        if(pressing[DN]) {
-            tank.moveBy(0,5);
-        }
-        if(pressing[LT]) {
-            tank.moveBy(-5,0);
-        }
-        if(pressing[RT]) {
-            tank.moveBy(5,0);
-        }
-        */
+        Camera.update();
     }
 
     public void paintComponent(Graphics g){
-        g.drawImage(background, 0, 0, null);
-
-        for(int row = 0; row < map.length; row++)
-        {
-            for(int col = 0; col < map[row].length(); col++)
-            {
-                char c = map[row].charAt(col);
-
-                if (c != '.')
-                g.drawImage(tile[c-'A'], S*col - Camera.x + Camera.x_origin, S*row - Camera.y + Camera.y_origin, S, S, null);
-            }
-        }
+        map.draw(g);
         robot.draw(g);
         //r.draw(g);
         //soldier.draw(g);

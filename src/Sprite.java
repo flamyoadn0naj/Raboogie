@@ -1,8 +1,8 @@
 import java.awt.*;
 
 public class Sprite {
-	double x;
-	double y;
+	int x;
+	int y;
 
 	double vx = 0;
 	double vy = 0;
@@ -10,7 +10,7 @@ public class Sprite {
 	double ax = 0;
 	double ay = 0;
 
-	public static final double GRAVITY = .4;
+	public static final double GRAVITY = 1;
 
 	int w;
 	int h;
@@ -28,7 +28,7 @@ public class Sprite {
 	
 	Animation[] animation;
 	
-	public Sprite(double x, double y,int w, int h, int action, String[] name, int duration, int count, String ext) {
+	public Sprite(int x, int y,int w, int h, int action, String[] name, int duration, int count, String ext) {
 		// where the sprite is
 		this.x = x;
 		this.y = y;
@@ -90,14 +90,24 @@ public class Sprite {
 		y += vy;
 	}
 
-	public void jumpUp(double d){
+	public void jumpUp(int dy){
 
-		vy += -1;
-		ay = GRAVITY;
+		vy = -dy;
 
 		action = UP;
 
 		moving = true;
+	}
+
+	public void stops() {
+		vx = 0;
+		vy = 0;
+		ay = 0;
+	}
+
+	public void applyGravity()
+	{
+		ay = GRAVITY;
 	}
 
 	public void setVelocity(double vx, double vy)
@@ -127,15 +137,15 @@ public class Sprite {
 		
 	public void draw(Graphics g) {
 		if(moving) {
-			g.drawRect((int)x - Camera.x + Camera.x_origin,(int)y - Camera.y + Camera.y_origin,50,75);
+			g.drawRect((int)x - Camera.x + Camera.x_origin,(int)y - Camera.y + Camera.y_origin,32,32);
 			g.drawImage(animation[action].getCurrentImage(), (int) x - Camera.x + Camera.x_origin,
-					(int) y - Camera.y + Camera.y_origin, 75, 75,
+					(int) y - Camera.y + Camera.y_origin, 32, 32,
 					null);
 
 		} else {
-			g.drawRect((int)x - Camera.x + Camera.x_origin,(int)y - Camera.y + Camera.y_origin,75,75);
+			g.drawRect((int)x - Camera.x + Camera.x_origin,(int)y - Camera.y + Camera.y_origin,32,32);
 			g.drawImage(animation[action].getStillImage(), (int) x - Camera.x + Camera.x_origin,
-					(int) y - Camera.y + Camera.y_origin,	75, 75,
+					(int) y - Camera.y + Camera.y_origin,	32, 32,
 					null);
 		}
 		
